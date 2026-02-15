@@ -1,10 +1,36 @@
 import { GoogleGenAI } from "@google/genai";
 import { Transaction } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Lazy initialization to prevent app crash on load if key is missing
+let ai: GoogleGenAI | null = null;
+
+const getAi = () => {
+  if (ai) return ai;
+  
+  // process.env.API_KEY is replaced by Vite at build time
+  const apiKey = process.env.API_KEY;
+  
+  if (!apiKey) {
+    console.warn("Gemini API Key is missing. Please add API_KEY to your Netlify environment variables.");
+    return null;
+  }
+  
+  try {
+    ai = new GoogleGenAI({ apiKey });
+    return ai;
+  } catch (e) {
+    console.error("Failed to initialize Gemini Client", e);
+    return null;
+  }
+};
 
 export const getFinancialInsights = async (transactions: Transaction[], currency: string): Promise<string> => {
   try {
+    const client = getAi();
+    if (!client) {
+      return "AI service unavailable. Please configure the API Key in settings.";
+    }
+
     const transactionSummary = transactions.map(t => 
       `- ${t.date.split('T')[0]}: ${t.title} (${t.type}) ${currency}${t.amount} [${t.status}] - Category: ${t.category}`
     ).join('\n');
@@ -17,7 +43,7 @@ export const getFinancialInsights = async (transactions: Transaction[], currency
       ${transactionSummary}
     `;
 
-    const response = await ai.models.generateContent({
+    const response = await client.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: prompt,
       config: {
@@ -34,7 +60,10 @@ export const getFinancialInsights = async (transactions: Transaction[], currency
 
 export const generateAppIcon = async (): Promise<string | null> => {
   try {
-    const response = await ai.models.generateContent({
+    const client = getAi();
+    if (!client) return null;
+
+    const response = await client.models.generateContent({
       model: 'gemini-2.5-flash-image',
       contents: {
         parts: [
