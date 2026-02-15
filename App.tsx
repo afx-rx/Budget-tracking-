@@ -156,7 +156,7 @@ const App: React.FC = () => {
     return saved ? JSON.parse(saved) : {
       name: "User",
       currency: "₹", 
-      monthlyBudget: 20000
+      monthlyBudget: 2000
     };
   });
 
@@ -272,12 +272,12 @@ const App: React.FC = () => {
           setUserProfile({
              name: data.name || 'User',
              currency: data.currency || '₹', // Fallback to INR if missing
-             monthlyBudget: data.monthly_budget || 20000
+             monthlyBudget: data.monthly_budget || 2000
           });
           localStorage.setItem('budgy_profile', JSON.stringify({
              name: data.name || 'User',
              currency: data.currency || '₹',
-             monthlyBudget: data.monthly_budget || 20000
+             monthlyBudget: data.monthly_budget || 2000
           }));
        } else {
           // If no profile exists in DB, try to sync local profile settings once
@@ -662,9 +662,12 @@ const App: React.FC = () => {
           </p>
         </div>
         <div className="flex items-center gap-3">
-           <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-500/20">
+           <button 
+             onClick={() => navigateTo(AppView.PROFILE)}
+             className="w-10 h-10 rounded-full bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-500/20 active:scale-95 transition-transform"
+           >
              {userProfile.name[0]}
-           </div>
+           </button>
         </div>
       </header>
       
