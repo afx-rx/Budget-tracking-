@@ -1,36 +1,26 @@
 import { GoogleGenAI } from "@google/genai";
 import { Transaction } from "../types";
 
-// Lazy initialization to prevent app crash on load if key is missing
+// Initialize the Gemini AI client
+// Note: In a production environment without a build step, process.env might not be defined.
+// This relies on the environment injecting it (like in the preview container).
+const apiKey = process.env.API_KEY;
 let ai: GoogleGenAI | null = null;
 
-const getAi = () => {
-  if (ai) return ai;
-  
-  // process.env.API_KEY is replaced by Vite at build time
-  const apiKey = process.env.API_KEY;
-  
-  if (!apiKey) {
-    console.warn("Gemini API Key is missing. Please add API_KEY to your Netlify environment variables.");
-    return null;
-  }
-  
+if (apiKey) {
   try {
     ai = new GoogleGenAI({ apiKey });
-    return ai;
   } catch (e) {
     console.error("Failed to initialize Gemini Client", e);
-    return null;
   }
-};
+} else {
+  console.warn("Gemini API Key is missing.");
+}
 
 export const getFinancialInsights = async (transactions: Transaction[], currency: string): Promise<string> => {
-  try {
-    const client = getAi();
-    if (!client) {
-      return "AI service unavailable. Please configure the API Key in settings.";
-    }
+  if (!ai) return "AI service unavailable. API Key missing.";
 
+  try {
     const transactionSummary = transactions.map(t => 
       `- ${t.date.split('T')[0]}: ${t.title} (${t.type}) ${currency}${t.amount} [${t.status}] - Category: ${t.category}`
     ).join('\n');
@@ -43,11 +33,11 @@ export const getFinancialInsights = async (transactions: Transaction[], currency
       ${transactionSummary}
     `;
 
-    const response = await client.models.generateContent({
+    const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: prompt,
       config: {
-        thinkingConfig: { thinkingBudget: 0 } // Speed over deep reasoning for simple summary
+        thinkingConfig: { thinkingBudget: 0 }
       }
     });
 
@@ -59,11 +49,9 @@ export const getFinancialInsights = async (transactions: Transaction[], currency
 };
 
 export const generateAppIcon = async (): Promise<string | null> => {
+  if (!ai) return null;
   try {
-    const client = getAi();
-    if (!client) return null;
-
-    const response = await client.models.generateContent({
+    const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash-image',
       contents: {
         parts: [
@@ -74,7 +62,6 @@ export const generateAppIcon = async (): Promise<string | null> => {
       },
     });
 
-    // Iterate through parts to find the image
     if (response.candidates?.[0]?.content?.parts) {
       for (const part of response.candidates[0].content.parts) {
         if (part.inlineData && part.inlineData.data) {

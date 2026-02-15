@@ -21,41 +21,33 @@
         theme: {
           extend: {
             colors: {
-              // Map semantic names and existing classes to CSS variables
-              primary: '#6366f1', // Indigo 500
-              secondary: '#a855f7', // Purple 500
-              success: '#10b981', // Emerald 500
-              danger: '#ef4444', // Red 500
-              warning: '#f59e0b', // Amber 500
-              
-              // Dynamic Theme Colors
+              primary: '#6366f1',
+              secondary: '#a855f7',
+              success: '#10b981',
+              danger: '#ef4444',
+              warning: '#f59e0b',
               dark: 'var(--bg-main)',
               card: 'var(--bg-surface)',
-              
-              // Overriding standard palette to support dynamic theming
               white: 'var(--text-header)',
               slate: {
                 50: '#f8fafc',
-                100: 'var(--text-header)', // mapped for some uses
-                200: 'var(--text-body)',   // formerly text-slate-200
+                100: 'var(--text-header)',
+                200: 'var(--text-body)',
                 300: 'var(--text-muted-light)',
                 400: 'var(--text-muted)',
                 500: 'var(--text-muted-dark)',
                 600: '#475569',
-                700: 'var(--border-main)', // formerly border-slate-700
-                800: 'var(--bg-surface)',  // formerly bg-slate-800
-                900: 'var(--bg-main)',     // formerly bg-dark
+                700: 'var(--border-main)',
+                800: 'var(--bg-surface)',
+                900: 'var(--bg-main)',
               }
             },
             fontFamily: {
               sans: ['Inter', 'sans-serif'],
             },
             animation: {
-              // Synchronized Entrance (1.2s duration, starts at 0s)
               'logo-entrance': 'logoEntrance 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
               'text-entrance': 'textEntrance 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
-              
-              // Synchronized Exit (0.6s duration, starts after 3.5s hold)
               'splash-exit': 'splashExit 0.6s ease-in forwards 3.5s',
             },
             keyframes: {
@@ -78,29 +70,25 @@
     </script>
     <style>
       :root {
-        /* Dark Mode (Default) */
-        --bg-main: #0f172a;       /* Slate 900 */
-        --bg-surface: #1e293b;    /* Slate 800 */
-        --text-header: #ffffff;   /* White */
-        --text-body: #e2e8f0;     /* Slate 200 */
-        --text-muted: #94a3b8;    /* Slate 400 */
-        --text-muted-light: #cbd5e1; /* Slate 300 */
-        --text-muted-dark: #64748b;  /* Slate 500 */
-        --border-main: #334155;   /* Slate 700 */
+        --bg-main: #0f172a;
+        --bg-surface: #1e293b;
+        --text-header: #ffffff;
+        --text-body: #e2e8f0;
+        --text-muted: #94a3b8;
+        --text-muted-light: #cbd5e1;
+        --text-muted-dark: #64748b;
+        --border-main: #334155;
       }
-
-      /* Light Mode Overrides */
       html.light {
-        --bg-main: #f8fafc;       /* Slate 50 */
-        --bg-surface: #ffffff;    /* White */
-        --text-header: #0f172a;   /* Slate 900 */
-        --text-body: #334155;     /* Slate 700 */
-        --text-muted: #64748b;    /* Slate 500 */
-        --text-muted-light: #94a3b8; /* Slate 400 */
-        --text-muted-dark: #475569;  /* Slate 600 */
-        --border-main: #e2e8f0;   /* Slate 200 */
+        --bg-main: #f8fafc;
+        --bg-surface: #ffffff;
+        --text-header: #0f172a;
+        --text-body: #334155;
+        --text-muted: #64748b;
+        --text-muted-light: #94a3b8;
+        --text-muted-dark: #475569;
+        --border-main: #e2e8f0;
       }
-
       body {
         background-color: var(--bg-main);
         color: var(--text-body);
@@ -108,25 +96,15 @@
         -webkit-tap-highlight-color: transparent;
         transition: background-color 0.3s ease, color 0.3s ease;
       }
-      
-      /* Smooth transitions for theme switching */
       *, *::before, *::after {
         transition-property: background-color, border-color, color, fill, stroke;
         transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
         transition-duration: 200ms;
       }
-
-      /* Hide scrollbar for Chrome, Safari and Opera */
-      .no-scrollbar::-webkit-scrollbar {
-        display: none;
-      }
-      /* Hide scrollbar for IE, Edge and Firefox */
-      .no-scrollbar {
-        -ms-overflow-style: none;  /* IE and Edge */
-        scrollbar-width: none;  /* Firefox */
-      }
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
-<script type="importmap">
+  <script type="importmap">
 {
   "imports": {
     "react": "https://esm.sh/react@^19.2.4",
