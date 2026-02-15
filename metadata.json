@@ -1,0 +1,5 @@
+{
+  "name": "Budgy",
+  "description": "A modern, mobile-first budget tracking application featuring income and expense management, pending transaction tracking, and AI-powered financial insights.",
+  "requestFramePermissions": []
+}
