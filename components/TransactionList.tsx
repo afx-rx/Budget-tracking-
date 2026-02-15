@@ -1,14 +1,15 @@
 import React from 'react';
 import { Transaction, TransactionType, TransactionStatus } from '../types';
-import { ArrowUpRight, ArrowDownLeft, Clock, Trash2 } from 'lucide-react';
+import { ArrowUpRight, ArrowDownLeft, Clock, Trash2, Check } from 'lucide-react';
 
 interface TransactionListProps {
   transactions: Transaction[];
   currency: string;
   onDelete: (id: string) => void;
+  onStatusChange?: (id: string, status: TransactionStatus) => void;
 }
 
-export const TransactionList: React.FC<TransactionListProps> = ({ transactions, currency, onDelete }) => {
+export const TransactionList: React.FC<TransactionListProps> = ({ transactions, currency, onDelete, onStatusChange }) => {
   // Sort by date desc
   const sorted = [...transactions].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
@@ -21,8 +22,8 @@ export const TransactionList: React.FC<TransactionListProps> = ({ transactions, 
         </div>
       )}
       {sorted.map(t => (
-        <div key={t.id} className="bg-card p-4 rounded-xl border border-slate-700 flex items-center justify-between group">
-          <div className="flex items-center space-x-4">
+        <div key={t.id} className="bg-card p-4 rounded-xl border border-slate-700 flex items-center justify-between group relative overflow-hidden">
+          <div className="flex items-center space-x-4 z-10">
             <div className={`p-3 rounded-full ${
               t.status === TransactionStatus.PENDING 
                 ? 'bg-slate-700 text-slate-400' 
@@ -45,19 +46,37 @@ export const TransactionList: React.FC<TransactionListProps> = ({ transactions, 
               </div>
             </div>
           </div>
-          <div className="flex flex-col items-end">
+          <div className="flex flex-col items-end z-10 gap-2">
              <span className={`font-bold ${
                t.type === TransactionType.INCOME ? 'text-success' : 'text-slate-100'
              } ${t.status === TransactionStatus.PENDING ? 'opacity-60' : ''}`}>
                {t.type === TransactionType.INCOME ? '+' : '-'}{currency}{t.amount.toLocaleString()}
              </span>
-             <button 
-               onClick={() => onDelete(t.id)}
-               className="text-slate-600 hover:text-danger mt-1 opacity-0 group-hover:opacity-100 transition-opacity"
-               title="Delete"
-             >
-                <Trash2 size={14} />
-             </button>
+             
+             <div className="flex items-center gap-2">
+               {t.status === TransactionStatus.PENDING && onStatusChange && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onStatusChange(t.id, TransactionStatus.COMPLETED);
+                    }}
+                    className="p-2 bg-slate-800 text-slate-400 hover:text-success hover:bg-success/10 rounded-full transition-colors border border-slate-600 hover:border-success"
+                    title="Mark as Completed"
+                  >
+                    <Check size={14} />
+                  </button>
+               )}
+               <button 
+                 onClick={(e) => {
+                   e.stopPropagation();
+                   onDelete(t.id);
+                 }}
+                 className="p-2 text-slate-600 hover:text-danger hover:bg-danger/10 rounded-full transition-colors"
+                 title="Delete"
+               >
+                  <Trash2 size={14} />
+               </button>
+             </div>
           </div>
         </div>
       ))}
